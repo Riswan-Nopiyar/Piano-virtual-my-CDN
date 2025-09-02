@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Piano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar */
+        .piano-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .piano-container::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        
+        .piano-container::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        .piano-container::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* Piano key animations */
+        .white-key:active,
+        .white-key.active {
+            background-color: #dbeafe !important;
+            transform: translateY(2px);
+        }
+        
+        .black-key:active,
+        .black-key.active {
+            background-color: #374151 !important;
+            transform: translateY(2px);
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-transparent">
+    <div id="pianoApp" class="w-full absolute bottom-0">
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="flex items-center justify-center p-8">
+            <div class="text-center">
+                <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full spinner mx-auto mb-4"></div>
+                <p class="text-white text-sm">Loading piano soundfont... <span id="loadingProgress">0%</span></p>
+            </div>
+        </div>
+
+        <!-- Piano Interface -->
+        <div id="pianoInterface" class="hidden">
+            <!-- Controls -->
+            <div class="flex items-center justify-center gap-4 mb-4 bg-black/70 backdrop-blur-sm rounded-lg p-3">
+                <button id="soundToggle" class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors bg-white/20 hover:bg-white/30">
+                    <svg id="volumeIcon" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 14.142M9 9l-3-3v4a2 2 0 002 2h1m0 0l3 3m-3-3V9"></path>
+                    </svg>
+                    <span id="soundStatus" class="text-white text-sm">ON</span>
+                </button>
+                
+                <div class="flex items-center gap-2">
+                    <span class="text-white text-sm">Vol:</span>
+                    <input id="volumeSlider" type="range" min="0" max="100" value="70" class="w-20 h-2 bg-white/30 rounded-lg appearance-none cursor-pointer">
+                    <span id="volumeDisplay" class="text-white text-sm w-8">70%</span>
+                </div>
+
+                <!-- Auto Play Controls -->
+                <div class="relative">
+                    <button id="autoPlayToggle" class="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors bg-green-500/80 hover:bg-green-500/90">
+                        <svg id="playIcon" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V15"></path>
+                        </svg>
+                        <span id="autoPlayText" class="text-white text-sm">Auto</span>
+                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Song Selection Menu -->
+                    <div id="songMenu" class="hidden absolute bottom-full mb-2 left-0 bg-black/90 backdrop-blur-sm rounded-lg p-2 min-w-[250px] max-h-[300px] overflow-y-auto shadow-xl border border-white/20 z-50">
+                        <div class="text-white text-xs font-medium mb-2 px-2">Select a song:</div>
+                        <div id="songList"></div>
+                    </div>
+
+                    <!-- Current Song Display -->
+                    <div id="currentSongDisplay" class="hidden absolute bottom-full mb-2 left-0 bg-black/90 backdrop-blur-sm rounded-lg px-3 py-1 shadow-lg border border-green-500/30">
+                        <span id="currentSongName" class="text-green-400 text-xs">♪ </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Piano -->
+            <div class="w-full max-w-[1800px] overflow-y-hidden overflow-x-auto bg-gray-800 rounded-lg shadow-2xl border border-gray-600 piano-container">
+                <div id="pianoKeys" class="relative" style="width: 1800px; height: 120px;">
+                    <!-- Keys will be generated here -->
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div id="instructions" class="text-center mt-2 text-white/80 text-xs">
+                Klik atau keyboard: Z-M (oktaf 3 natural), S-J (oktaf 3 kres/mol) | Q-P (oktaf 4-5 natural), 2-0 (oktaf 4-5 kres/mol)
+            </div>
+        </div>
+    </div>
+
+    <!-- Load soundfont script -->
+    <script src="./piano/audio/acoustic_grand_piano-mp3.js"></script>
+    <script src="./piano/js/main.js"></script>
+</body>
+</html>
